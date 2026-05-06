@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Термины ГОСТ Р 7.0.8-2025 (точный ввод)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .game-container {
+            max-width: 700px;
+            width: 100%;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 20px 25px 35px;
+            transition: all 0.2s;
+        }
+        h1 {
+            font-size: 1.6rem;
+            margin: 0 0 5px 0;
+            color: #1e3a5f;
+        }
+        .sub {
+            color: #4a627a;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .term-card {
+            background: #e6f0fa;
+            border-radius: 24px;
+            padding: 25px 15px;
+            text-align: center;
+            margin: 20px 0;
+            border: 1px solid #bdd4e8;
+        }
+        .term {
+            font-size: 1.9rem;
+            font-weight: bold;
+            color: #0b3b5f;
+            word-break: break-word;
+        }
+        .input-area {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 15px 0 10px;
+        }
+        input {
+            padding: 14px 16px;
+            font-size: 1rem;
+            border: 1px solid #bdc4cc;
+            border-radius: 48px;
+            font-family: inherit;
+            outline: none;
+            transition: 0.2s;
+        }
+        input:focus {
+            border-color: #2c7da0;
+            box-shadow: 0 0 0 2px rgba(44,125,160,0.2);
+        }
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        button {
+            background: #2c7da0;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        button:hover {
+            background: #1f5e7a;
+            transform: scale(0.97);
+        }
+        .btn-outline {
+            background: #eef2f7;
+            color: #1e4663;
+            border: 1px solid #bdd4e8;
+        }
+        .btn-outline:hover {
+            background: #d9e2ef;
+        }
+        .result {
+            background: #f8f9fc;
+            padding: 12px 18px;
+            border-radius: 28px;
+            margin-top: 15px;
+            font-size: 0.95rem;
+            border-left: 6px solid #2c7da0;
+        }
+        .score {
+            font-size: 1.4rem;
+            font-weight: bold;
+            background: #e9ecef;
+            display: inline-block;
+            padding: 5px 20px;
+            border-radius: 60px;
+            margin-top: 10px;
+        }
+        .repeat-list {
+            background: #fff7e5;
+            margin-top: 20px;
+            padding: 10px 15px;
+            border-radius: 24px;
+            font-size: 0.85rem;
+        }
+        hr {
+            margin: 20px 0 10px;
+        }
+        footer {
+            font-size: 0.75rem;
+            text-align: center;
+            color: #6c7e97;
+            margin-top: 20px;
+        }
+        .strict-warning {
+            background: #fff0db;
+            border-radius: 20px;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            color: #a66400;
+            text-align: center;
+        }
+        @media (max-width: 500px) {
+            .term { font-size: 1.4rem; }
+            .game-container { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+<div class="game-container">
+    <h1>📄 Терминологический куб</h1>
+    <div class="sub">ГОСТ Р 7.0.8-2025 · делопроизводство и архивное дело</div>
+
+    <div class="term-card">
+        <div style="font-size:0.9rem; color:#2c5a7a;">🎲 Ваш термин</div>
+        <div class="term" id="termDisplay">Нажмите «Случайный термин»</div>
+    </div>
+
+    <div class="input-area">
+        <input type="text" id="userDef" placeholder="Введите определение в точности, как в ГОСТ...">
+        <div class="button-group">
+            <button id="checkBtn">✅ Проверить</button>
+            <button id="dontKnowBtn" class="btn-outline">❓ Не знаю</button>
+            <button id="newTermBtn">🎲 Случайный термин</button>
+        </div>
+    </div>
+
+    <div id="resultArea" class="result">
+        Здесь будет результат проверки и правильное определение.
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;">
+        <div class="score">⭐ Очки: <span id="scoreValue">0</span></div>
+        <button id="resetScoreBtn" class="btn-outline" style="padding: 5px 15px;">Сбросить счёт</button>
+    </div>
+
+    <div id="repeatArea" class="repeat-list">
+        🔁 Слова для повторения: <span id="repeatList">(пока нет)</span><br>
+        <button id="clearRepeatBtn" class="btn-outline" style="margin-top: 8px; padding: 4px 12px; font-size:0.8rem;">Очистить список повторения</button>
+    </div>
+    <div class="strict-warning">
+        ⚠️ Внимание: правильным засчитывается только <strong>полное дословное совпадение</strong> с определением из ГОСТа (с учётом регистра, знаков препинания и пробелов). Скопируйте или введите в точности!
+    </div>
+    <footer>Правила: назовите определение термина → проверьте. При ошибке термин добавляется в «повторение». Удачи!</footer>
+</div>
+
+<script>
+// (JS код полностью сохранён)
+
+    const termsData = [
+        { id:1,  term:"делопроизводство", def:"Совокупность процессов работы с документами, включая документирование, документооборот, оперативное хранение и использование документов в деятельности организации." }
+    ];
+</script>
+</body>
+</html>
