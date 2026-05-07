@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>ГОСТ Р 7.0.8-2025 — Два режима: термин→определение и определение→термин</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, 'Noto Sans', system-ui, sans-serif;
+            background: #eef2f8;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .game-container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 44px;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.1);
+            padding: 22px 28px 35px;
+            transition: all 0.2s;
+        }
+        h1 {
+            font-size: 1.7rem;
+            margin: 0 0 5px 0;
+            color: #1a3c5e;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .mode-switch {
+            background: #e9edf2;
+            border-radius: 60px;
+            padding: 4px;
+            display: inline-flex;
+            gap: 6px;
+        }
+        .mode-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 60px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: #2c5a7a;
+            transition: 0.2s;
+            box-shadow: none;
+        }
+        .mode-btn.active {
+            background: #2c7da0;
+            color: white;
+        }
+        .sub {
+            color: #2c5a7a;
+            border-bottom: 2px solid #dce5ef;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .term-card {
+            background: #eaf3fc;
+            border-radius: 38px;
+            padding: 28px 18px;
+            text-align: center;
+            margin: 20px 0;
+            border: 1px solid #caddf0;
+        }
+        .term-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #2c7da0;
+            margin-bottom: 10px;
+        }
+        .term {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: #0b3b5f;
+            word-break: break-word;
+            line-height: 1.4;
+        }
+        .input-area {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin: 18px 0 12px;
+        }
+        input {
+            padding: 15px 22px;
+            font-size: 1rem;
+            border: 2px solid #cfdfed;
+            border-radius: 60px;
+            font-family: inherit;
+            outline: none;
+        }
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+        button {
+            background: #2c7da0;
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 60px;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+        .btn-outline {
+            background: #f0f5fa;
+            color: #1e4663;
+            border: 1px solid #cbdde9;
+        }
+        .result {
+            background: #f8fafd;
+            padding: 14px 20px;
+            border-radius: 28px;
+            margin-top: 20px;
+            font-size: 0.95rem;
+            border-left: 5px solid #2c7da0;
+        }
+        .score {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: #e9edf2;
+            display: inline-block;
+            padding: 6px 24px;
+            border-radius: 60px;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+
+    <h1>
+        📖 ГОСТ Р 7.0.8-2025
+
+        <div class="mode-switch">
+            <button class="mode-btn active" data-mode="direct">
+                📘 Термин → Определение
+            </button>
+
+            <button class="mode-btn" data-mode="reverse">
+                🔄 Определение → Термин
+            </button>
+        </div>
+    </h1>
+
+    <div class="sub">
+        Точные определения · Делопроизводство и архивное дело
+    </div>
+
+    <div class="term-card">
+        <div class="term-label" id="cardLabel">🎯 ТЕРМИН</div>
+        <div class="term" id="termDisplay">Загрузка...</div>
+    </div>
+
+    <div class="input-area">
+        <input type="text" id="userDef" placeholder="Введите ответ..." autocomplete="off">
+
+        <div class="button-group">
+            <button id="checkBtn">✅ Проверить</button>
+            <button id="dontKnowBtn" class="btn-outline">❓ Не знаю</button>
+            <button id="newTermBtn">🎲 Случайный термин</button>
+        </div>
+    </div>
+
+    <div id="resultArea" class="result">
+        ✨ Выберите режим и начните тренировку.
+    </div>
+
+    <div class="score">
+        ⭐ Очки: <span id="scoreValue">0</span>
+    </div>
+
+</div>
+
+<script>
+const termsData = [
+    {
+        term: "делопроизводство",
+        def: "Совокупность процессов работы с документами, включая документирование, документооборот, оперативное хранение и использование документов в деятельности организации."
+    },
+    {
+        term: "документ",
+        def: "Зафиксированная на носителе информация с реквизитами и/или метаданными, позволяющими ее идентифицировать."
+    },
+    {
+        term: "документирование",
+        def: "Стадия жизненного цикла документа, на которой осуществляется запись информации."
+    }
+];
+
+let currentTermObj = null;
+let userScore = 0;
+let isReverseMode = false;
+
+const termDisplayEl = document.getElementById("termDisplay");
+const cardLabelEl = document.getElementById("cardLabel");
+const userDefInput = document.getElementById("userDef");
+const resultArea = document.getElementById("resultArea");
+const scoreSpan = document.getElementById("scoreValue");
+
+function getRandomTermFromDB() {
+    return termsData[Math.floor(Math.random() * termsData.length)];
+}
+
+function renderCurrentCard() {
+    if (isReverseMode) {
+        termDisplayEl.innerText = currentTermObj.def;
+        cardLabelEl.innerHTML = "📖 ОПРЕДЕЛЕНИЕ";
+        userDefInput.placeholder = "Введите термин...";
+    } else {
+        termDisplayEl.innerText = currentTermObj.term;
+        cardLabelEl.innerHTML = "🎯 ТЕРМИН";
+        userDefInput.placeholder = "Введите определение...";
+    }
+}
+
+function setRandomTerm() {
+    currentTermObj = getRandomTermFromDB();
+    renderCurrentCard();
+    userDefInput.value = "";
+}
+
+function checkAnswer() {
+    const userAnswer = userDefInput.value.trim();
+
+    let correctAnswer = isReverseMode
+        ? currentTermObj.term
+        : currentTermObj.def;
+
+    if (userAnswer === correctAnswer) {
+        userScore++;
+        scoreSpan.innerText = userScore;
+        resultArea.innerHTML = "✅ Верно!";
+        setRandomTerm();
+    } else {
+        resultArea.innerHTML =
+            "❌ Неверно.<br><br><strong>Правильный ответ:</strong><br>" +
+            correctAnswer;
+    }
+}
+
+document.getElementById("checkBtn")
+    .addEventListener("click", checkAnswer);
+
+document.getElementById("newTermBtn")
+    .addEventListener("click", setRandomTerm);
+
+document.getElementById("dontKnowBtn")
+    .addEventListener("click", () => {
+        let answer = isReverseMode
+            ? currentTermObj.term
+            : currentTermObj.def;
+
+        resultArea.innerHTML =
+            "📖 Правильный ответ:<br><br>" + answer;
+
+        setRandomTerm();
+    });
+
+document.querySelectorAll(".mode-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+
+        document.querySelectorAll(".mode-btn")
+            .forEach(b => b.classList.remove("active"));
+
+        btn.classList.add("active");
+
+        isReverseMode = btn.dataset.mode === "reverse";
+
+        renderCurrentCard();
+    });
+});
+
+userDefInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+        checkAnswer();
+    }
+});
+
+setRandomTerm();
+</script>
+
+</body>
+</html>
